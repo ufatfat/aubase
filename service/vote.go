@@ -39,7 +39,7 @@ func VoteForWork (workID uint64, userID uint32, positive bool) (err error) {
 			return
 		}
 	} else {
-		err = db.Table("results").Where("user_id=? and work_id=?", userID, workID).Update("is_positive", positive).Error
+		db.Table("results").Where("user_id=? and work_id=?", userID, workID).Update("is_positive", positive)
 	}
-	return
+	return nil
 }
