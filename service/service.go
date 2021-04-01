@@ -1,6 +1,7 @@
 package service
 
 import (
+	"AUBase/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -20,7 +21,7 @@ func init () {
 		Colorful:      true,         // Disable color
 	},
 )
-	dsn := 	mysql.Open("aubase:PivotStudio@2020@tcp(rm-2zeok8s8lj4322wc3do.mysql.rds.aliyuncs.com)/aubase?parseTime=true")
+	dsn := 	mysql.Open(config.DSN)
 	db, _ = gorm.Open(dsn, &gorm.Config{
 		Logger: newLogger,
 	})
