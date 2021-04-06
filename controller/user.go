@@ -40,17 +40,17 @@ func SignIn (c *gin.Context) {
 		})
 		return
 	}
-	c.SetCookie("token", token, -1, "/", ".aubase.cn", true, true)
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "登录成功！",
 		"data": gin.H{
 			"name": userInfo.Name,
+			"token": token,
 		},
+		"token": util.UpdateToken(token),
 	})
 }
 
 func SignOut (c *gin.Context) {
-	c.SetCookie("token", "", 0, "/", ".aubase.cn", true, true)
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "登出成功！",
 	})
@@ -65,7 +65,7 @@ func MyVotedWork (c *gin.Context) {
 		})
 		return
 	}
-	token, _ := c.Cookie("token")
+	token := c.GetHeader("Authorization")[7:]
 	id, err := util.GetIDFromToken(token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -74,7 +74,10 @@ func MyVotedWork (c *gin.Context) {
 		return
 	}
 	work, err := service.MyVotedWork(id, positive)
-	c.JSON(http.StatusOK, work)
+	c.JSON(http.StatusOK, gin.H{
+		"data": work,
+		"token": util.UpdateToken(token),
+	})
 }
 
 func ChangePassword (c *gin.Context) {

@@ -10,7 +10,7 @@ import (
 )
 
 func GetWorkToVote (c *gin.Context) {
-	token, _ := c.Cookie("token")
+	token := c.GetHeader("Authorization")[7:]
 	userID, err := util.GetIDFromToken(token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -33,11 +33,14 @@ func GetWorkToVote (c *gin.Context) {
 			return
 		}
 	}
-	c.JSON(http.StatusOK, workToVote)
+	c.JSON(http.StatusOK, gin.H{
+		"data": workToVote,
+		"token": util.UpdateToken(token),
+	})
 }
 
 func VoteForWork (c *gin.Context) {
-	token, _ := c.Cookie("token")
+	token := c.GetHeader("Authorization")[7:]
 	userID, err := util.GetIDFromToken(token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -70,5 +73,6 @@ func VoteForWork (c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "投票成功！",
 		"status": positive,
+		"token": util.UpdateToken(token),
 	})
 }
