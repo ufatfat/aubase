@@ -12,5 +12,5 @@ type UserInfo struct {
 
 type VotedWork struct {
 	WorkID uint64	`json:"work_id"`
-	ImageUrl string	`json:"image_url"`
+	IsNegative bool	`json:"is_negative"`
 }

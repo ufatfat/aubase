@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
-	"strconv"
 )
 
 func SignIn (c *gin.Context) {
@@ -57,14 +56,6 @@ func SignOut (c *gin.Context) {
 }
 
 func MyVotedWork (c *gin.Context) {
-	p := c.Query("positive")
-	positive, err := strconv.ParseBool(p)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
-		})
-		return
-	}
 	token := c.GetHeader("Authorization")[7:]
 	id, err := util.GetIDFromToken(token)
 	if err != nil {
@@ -73,7 +64,7 @@ func MyVotedWork (c *gin.Context) {
 		})
 		return
 	}
-	work, err := service.MyVotedWork(id, positive)
+	work, err := service.MyVotedWork(id)
 	c.JSON(http.StatusOK, gin.H{
 		"data": work,
 		"token": util.UpdateToken(token),
