@@ -18,7 +18,7 @@ func MyVotedWork (id uint32) (work []model.VotedWork, err error) {
 		return
 	}
 	var temp []model.VotedWork
-	if err = db.Table("work").Select("work_id", "is_negative").Where("is_negative=1").Find(&temp).Error; err != nil {
+	if err = db.Table("work").Select("id", "is_negative").Where("is_negative=1").Find(&temp).Error; err != nil {
 		fmt.Println(err.Error())
 		return
 	}

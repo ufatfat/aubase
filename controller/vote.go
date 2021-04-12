@@ -10,6 +10,7 @@ import (
 )
 
 func GetWorkToVote (c *gin.Context) {
+	workID, err := strconv.ParseUint(c.Param("workID"), 10, 64)
 	token := c.GetHeader("Authorization")[7:]
 	userID, err := util.GetIDFromToken(token)
 	if err != nil {
@@ -19,7 +20,7 @@ func GetWorkToVote (c *gin.Context) {
 		return
 	}
 
-	workToVote, err := service.GetWorkToVote(userID)
+	workToVote, err := service.GetWorkToVote(userID, workID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusOK, gin.H{

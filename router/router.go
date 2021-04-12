@@ -20,7 +20,7 @@ func InitRouter () (r *gin.Engine) {
 	vote := r.Group("/vote")
 	{
 		vote.Use(middleware.IsSignedOut)
-		vote.GET("", controller.GetWorkToVote)
+		vote.GET("/:workID", controller.GetWorkToVote)
 		vote.PUT("", controller.VoteForWork)
 	}
 
