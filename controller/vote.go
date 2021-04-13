@@ -12,7 +12,7 @@ import (
 func GetWorkToVote (c *gin.Context) {
 	workID, err := strconv.ParseUint(c.Param("workID"), 10, 64)
 	token := c.GetHeader("Authorization")[7:]
-	userID, err := util.GetIDFromToken(token)
+	//userID, err := util.GetIDFromToken(token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
@@ -20,11 +20,11 @@ func GetWorkToVote (c *gin.Context) {
 		return
 	}
 
-	workToVote, err := service.GetWorkToVote(userID, workID)
+	workToVote, err := service.GetWorkToVote(workID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusOK, gin.H{
-				"msg": "没有未评作品！",
+				"msg": "没有此作品！",
 			})
 			return
 		} else {
