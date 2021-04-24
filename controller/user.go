@@ -1,24 +1,33 @@
 package controller
 
 import (
+	"AUBase/model"
 	"AUBase/service"
 	"AUBase/util"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
 )
 
 func SignIn (c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
-	if username == "" || password == "" {
+	var signIn model.UserSignIn
+	if err := c.BindJSON(&signIn); err != nil {
+		fmt.Println(err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": "参数错误",
+		})
+		return
+	}
+
+	if signIn.Username == "" || signIn.Password == "" {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{
 			"msg": "用户名/密码不能为空！",
 		})
 		return
 	}
-	password = util.PasswordEncrypt(password)
-	userInfo, err := service.SignIn(username, password)
+	password := util.PasswordEncrypt(signIn.Password)
+	userInfo, err := service.SignIn(signIn.Username, password)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
