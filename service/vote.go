@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-/*func GetWorkToVote (userID uint32) (work model.WorkToVote, err error) {
+func GetWorkToVoteByUserID (userID uint32) (work model.WorkToVote, err error) {
 	var workInfo model.WorkInfo
 	if err = db.Table("work").Select("id", "work_index").Where("id not in (?)", db.Table("results").Select("work_id").Where("user_id=?", userID)).First(&workInfo).Error; err != nil {
 		fmt.Println(err.Error())
@@ -16,7 +16,7 @@ import (
 	work.ID = workInfo.ID
 	work.WorkIndex = workInfo.WorkIndex
 	return
-}*/
+}
 
 func GetWorkToVote (workID uint64) (work model.WorkToVote, err error) {
 	var workInfo model.WorkInfo

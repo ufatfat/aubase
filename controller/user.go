@@ -11,7 +11,9 @@ import (
 )
 
 func SignIn (c *gin.Context) {
+
 	var signIn model.UserSignIn
+
 	if err := c.BindJSON(&signIn); err != nil {
 		fmt.Println(err.Error())
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -19,7 +21,6 @@ func SignIn (c *gin.Context) {
 		})
 		return
 	}
-
 	if signIn.Username == "" || signIn.Password == "" {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{
 			"msg": "用户名/密码不能为空！",
