@@ -13,9 +13,10 @@ type WorkImages struct {
 type WorkInfo struct {
 	ID uint64			`json:"id"`
 	WorkIndex uint16 	`json:"work_index"`
+	IsNegative bool		`json:"is_negative"`
 }
 
 type VoteInfo struct {
 	WorkID		uint64	`json:"work_id"`
-	Positive	bool	`json:"positive"`
+	Negative	bool	`json:"negative"`
 }

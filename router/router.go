@@ -20,9 +20,21 @@ func InitRouter () (r *gin.Engine) {
 	vote := r.Group("/vote")
 	{
 		vote.Use(middleware.IsSignedOut)
-		vote.GET("", controller.GetWorkToVote)
-		vote.GET("/:workID", controller.GetWorkToVoteByID)
 		vote.PUT("", controller.VoteForWork)
+	}
+	work := r.Group("/work")
+	{
+		vote.Use(middleware.IsSignedOut)
+		work.GET("", controller.GetWorkToVote)
+		work.GET("/:workID", func (c *gin.Context) {
+			p := c.Param("workID")
+			switch p {
+			case "num":
+				controller.GetWorkNum(c)
+			default:
+				controller.GetWorkToVoteByID(c)
+			}
+		})
 	}
 
 	return
