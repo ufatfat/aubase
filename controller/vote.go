@@ -11,58 +11,57 @@ import (
 )
 
 func GetWorkToVote (c *gin.Context) {
-	wID := c.Param("workID")
-	var workID uint64
-	var err error
-	var userID uint32
 	token := c.GetHeader("Authorization")[7:]
-	if wID == "" {
-		userID, err = util.GetIDFromToken(token)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"msg": err.Error(),
+	userID, err := util.GetIDFromToken(token)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	workToVote, err := service.GetWorkToVoteByUserID(userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusOK, gin.H{
+				"msg": "没有未投作品！",
 			})
 			return
-		}
-	} else {
-		workID, err = strconv.ParseUint(wID, 10, 64)
-		if err != nil {
+		} else {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 				"msg": err.Error(),
 			})
 			return
 		}
 	}
-	var workToVote model.WorkToVote
-	if wID == "" {
-		workToVote, err = service.GetWorkToVoteByUserID(userID)
-		if err != nil {
-			if err == gorm.ErrRecordNotFound {
-				c.JSON(http.StatusOK, gin.H{
-					"msg": "没有未投作品！",
-				})
-				return
-			} else {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"msg": err.Error(),
-				})
-				return
-			}
-		}
-	} else {
-		workToVote, err = service.GetWorkToVote(workID)
-		if err != nil {
-			if err == gorm.ErrRecordNotFound {
-				c.JSON(http.StatusOK, gin.H{
-					"msg": "没有此作品！",
-				})
-				return
-			} else {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"msg": err.Error(),
-				})
-				return
-			}
+	c.JSON(http.StatusOK, gin.H{
+		"data": workToVote,
+		"token": util.UpdateToken(token),
+	})
+}
+
+func GetWorkToVoteByID (c *gin.Context) {
+	workID, err := strconv.ParseUint(c.Param("workID"), 10, 64)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	token := c.GetHeader("Authorization")[7:]
+
+	workToVote, err := service.GetWorkToVote(workID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusOK, gin.H{
+				"msg": "没有此作品！",
+			})
+			return
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"msg": err.Error(),
+			})
+			return
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
