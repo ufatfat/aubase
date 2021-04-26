@@ -3,6 +3,7 @@ package service
 import (
 	"AUBase/model"
 	"fmt"
+	"gorm.io/gorm"
 )
 
 func GetWorkNum () (num uint64) {
@@ -28,7 +29,7 @@ func GetWorkInfo (workID uint64, userID uint32) (work model.WorkToVote, err erro
 		fmt.Println(err.Error())
 		return
 	}
-	if err = db.Table("results").Select("is_negative").Where("user_id=? and work_id=?", userID, workID).Take(&work.IsNegative).Error; err != nil {
+	if err = db.Table("results").Select("is_negative").Where("user_id=? and work_id=?", userID, workID).Take(&work.IsNegative).Error; err != nil && err != gorm.ErrRecordNotFound {
 		fmt.Println(err.Error())
 		return
 	}
