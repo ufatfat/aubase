@@ -12,7 +12,7 @@ type WorkImages struct {
 
 type WorkInfo struct {
 	ID uint64			`json:"id"`
-	WorkIndex uint16 	`json:"work_index"`
+	WorkIndex string 	`json:"work_index"`
 	IsNegative bool		`json:"is_negative"`
 }
 
