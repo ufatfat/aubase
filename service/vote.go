@@ -33,3 +33,10 @@ func VoteForWork (workID uint64, userID uint32, negative bool) (err error) {
 	}
 	return nil
 }
+
+func GetVotedNum (userID, activityID, turnID uint32) (votedNum uint32, err error) {
+	if err = db.Table("votes").Select("voted_num").Where("userID=? and activityID=? and turnID=?", userID, activityID, turnID).Take(&votedNum).Error; err == gorm.ErrRecordNotFound{
+		err = nil
+	}
+	return
+}

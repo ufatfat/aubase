@@ -22,6 +22,7 @@ func InitRouter () (r *gin.Engine) {
 		{
 			vote.Use(middleware.IsSignedOut)
 			vote.PUT("", controller.VoteForWork)
+			vote.GET("/num",controller.GetVotedNum)
 		}
 		work := api.Group("/work")
 		{
@@ -36,6 +37,10 @@ func InitRouter () (r *gin.Engine) {
 					controller.GetWorkToVoteByID(c)
 				}
 			})
+		}
+		activity := api.Group("/activity")
+		{
+			activity.GET("/turn", controller.GetTurnInfo)
 		}
 	}
 
