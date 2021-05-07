@@ -2,8 +2,10 @@ package controller
 
 import (
 	"aubase/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func GetWorkToVote (c *gin.Context) {
@@ -11,21 +13,22 @@ func GetWorkToVote (c *gin.Context) {
 	activityID, _ := c.Get("activityID")
 	turnID, _ := c.Get("turnID")
 	workInfo, err := service.GetWorkToVote(userID.(uint32), activityID.(uint32), turnID.(uint32))
+	fmt.Println(workInfo)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
 		})
 		return
 	}
-	if workInfo.WorkID == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "当前轮次无此作品！",
-		})
-		return
-	}
 	if workInfo.WorkGroup == "End" {
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "当前轮次作品已浏览完！",
+		})
+		return
+	}
+	if workInfo.WorkGroup == "No" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "当前轮次无此作品！",
 		})
 		return
 	}
@@ -36,7 +39,6 @@ func GetWorkToVote (c *gin.Context) {
 }
 func GetWorkToVoteByID (c *gin.Context) {
 	userID, _ := c.Get("userID")
-	activityID, _ := c.Get("activityID")
 	turnID, _ := c.Get("turnID")
 	w := c.Param("workID")
 	if w == "" {
@@ -44,10 +46,17 @@ func GetWorkToVoteByID (c *gin.Context) {
 			"msg": "参数错误！",
 		})
 	}
-	workInfo, err := service.GetWorkToVote(userID.(uint32), activityID.(uint32), turnID.(uint32))
+	workID, err := strconv.ParseUint(w, 10, 32)
+	workInfo, err := service.GetWorkToVoteByID(userID.(uint32), turnID.(uint32), uint32(workID))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
+		})
+		return
+	}
+	if workInfo.WorkID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "当前轮次无此作品！",
 		})
 		return
 	}

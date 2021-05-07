@@ -5,6 +5,7 @@ type (
 		WorkID			uint32		`json:"work_id"`
 		WorkGroup		string		`json:"work_group"`
 		WorkIndex		uint32		`json:"work_index"`
+		IsVoted			bool		`json:"is_voted"`
 		WorkImages		[]WorkImage	`json:"work_images" gorm:"-"`
 	}
 	WorkImage struct {
