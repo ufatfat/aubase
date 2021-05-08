@@ -29,3 +29,11 @@ func UploadImage (c *gin.Context) {
 		}
 	}
 }
+
+func CreateWork (c *gin.Context) {
+
+}
+
+func uploadFilesToOSS () {
+
+}

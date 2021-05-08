@@ -48,8 +48,8 @@ func InitRouter () (r *gin.Engine) {
 		}
 		upload := api.Group("upload")
 		{
-			//upload.Use(middleware.IsSignedOut)
 			upload.POST("", controller.UploadImage)
+			upload.POST("/info", controller.CreateWork)
 		}
 	}
 
