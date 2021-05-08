@@ -50,6 +50,7 @@ func InitRouter () (r *gin.Engine) {
 		{
 			upload.POST("", controller.UploadImage)
 			upload.POST("/info", controller.CreateWork)
+			upload.GET("/group", controller.GetGroups)
 		}
 	}
 

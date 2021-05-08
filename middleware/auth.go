@@ -59,6 +59,7 @@ func IsSignedOut (c *gin.Context) {
 }
 
 func IsActivityOpen (c *gin.Context) {
+	c.Header("Access-Control-Allow-Headers", "X-Requested-With")
 	a := c.GetHeader("Activity")
 	if a == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
