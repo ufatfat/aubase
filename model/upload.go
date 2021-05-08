@@ -17,3 +17,9 @@ type WorkGroup struct {
 	GroupName			string		`json:"group_name"`
 	GroupDesc			string		`json:"group_desc"`
 }
+
+type ImageInfo struct {
+	WorkID				uint32		`json:"work_id"`
+	ImageUrl			string		`json:"image_url"`
+	ImageIndex			uint8		`json:"image_index"`
+}

@@ -9,33 +9,47 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func UploadImage (c *gin.Context) {
-	form, _ := c.MultipartForm()
-	for k, v := range form.File {
-		fmt.Println("k:", k)
-		for k1, v1 := range v {
-			fmt.Println("k1:", k1, ", filename:", v1.Filename)
-		}
-	}
-	/*form, err := c.MultipartForm()
+	activityID, _ := c.Get("activityID")
+	w := c.Query("work")
+	workID, err := strconv.ParseUint(w, 10, 32)
 	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	file, err := c.FormFile("upload")
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	filename := "/" + strconv.FormatUint(uint64(activityID.(uint32)), 10) + "/" + w + "/" +  file.Filename
+	if err = c.SaveUploadedFile(file, "tmp" + filename); err != nil {
+		fmt.Println(err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
 		})
 		return
 	}
-	files := form.File["upload[]"]
-	for k, v := range files {
-		fmt.Println("k:", k)
-		if err = c.SaveUploadedFile(v, "tmp/" + v.Filename); err != nil {
-			fmt.Println(err.Error())
-		}
-	}*/
+	if err = uploadFilesToOSS(filename, uint32(workID)); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "上传成功！",
+	})
 }
 
-func uploadFilesToOSS () {
+func uploadFilesToOSS (file string, workID uint32) (err error) {
 	// 创建OSSClient实例。
 	client, err := oss.New(config.OSS_ENDPOINT, config.OSS_KEY_ID, config.OSS_KEY_SECRET)
 	if err != nil {
@@ -47,15 +61,19 @@ func uploadFilesToOSS () {
 	bucket, err := client.Bucket("2021aubase")
 	if err != nil {
 		fmt.Println("Error:", err)
-		os.Exit(-1)
 	}
 
 	// 上传本地文件。
-	err = bucket.PutObjectFromFile("/", "")
-	if err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(-1)
+	if err = bucket.PutObjectFromFile(file, "tmp" + file); err != nil {
+		fmt.Println(err.Error())
+		return
+	} else {
+		os.Remove("tmp" + file)
+		if strings.Index(file, "compressed") == -1 {
+			service.AddImageToDB(workID, file)
+		}
 	}
+	return
 }
 
 func GetGroups (c *gin.Context) {
