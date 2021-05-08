@@ -16,13 +16,6 @@ import (
 func UploadImage (c *gin.Context) {
 	activityID, _ := c.Get("activityID")
 	w := c.Query("work")
-	workID, err := strconv.ParseUint(w, 10, 32)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
-		})
-		return
-	}
 	file, err := c.FormFile("upload")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -30,15 +23,20 @@ func UploadImage (c *gin.Context) {
 		})
 		return
 	}
-	filename := "/" + strconv.FormatUint(uint64(activityID.(uint32)), 10) + "/" + w + "/" +  file.Filename
-	if err = c.SaveUploadedFile(file, "tmp" + filename); err != nil {
+	fileInfo := model.FileInfo{
+		ActivityID: strconv.FormatUint(uint64(activityID.(uint32)), 10),
+		WorkID: w,
+		ImageName: file.Filename,
+	}
+	filename := fileInfo.ActivityID + "_" + fileInfo.WorkID + "_" + fileInfo.ImageName
+	if err = c.SaveUploadedFile(file, "tmp/" + filename); err != nil {
 		fmt.Println(err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
 		})
 		return
 	}
-	if err = uploadFilesToOSS(filename, uint32(workID)); err != nil {
+	if err = uploadFilesToOSS(&fileInfo); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
 		})
@@ -49,7 +47,7 @@ func UploadImage (c *gin.Context) {
 	})
 }
 
-func uploadFilesToOSS (file string, workID uint32) (err error) {
+func uploadFilesToOSS (fileInfo *model.FileInfo) (err error) {
 	// 创建OSSClient实例。
 	client, err := oss.New(config.OSS_ENDPOINT, config.OSS_KEY_ID, config.OSS_KEY_SECRET)
 	if err != nil {
@@ -63,14 +61,15 @@ func uploadFilesToOSS (file string, workID uint32) (err error) {
 		fmt.Println("Error:", err)
 	}
 
+	filePath := "tmp/" + fileInfo.ActivityID + "_" + fileInfo.WorkID + "_" + fileInfo.ImageName
 	// 上传本地文件。
-	if err = bucket.PutObjectFromFile(file, "tmp" + file); err != nil {
+	if err = bucket.PutObjectFromFile("/" + fileInfo.ActivityID + "/" + fileInfo.WorkID + "/" + fileInfo.ImageName, filePath); err != nil {
 		fmt.Println(err.Error())
 		return
 	} else {
-		os.Remove("tmp" + file)
-		if strings.Index(file, "compressed") == -1 {
-			service.AddImageToDB(workID, file)
+		os.Remove(filePath)
+		if strings.Index(filePath, "compressed") == -1 {
+			service.AddImageToDB(fileInfo)
 		}
 	}
 	return

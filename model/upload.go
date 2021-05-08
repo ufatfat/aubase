@@ -23,3 +23,9 @@ type ImageInfo struct {
 	ImageUrl			string		`json:"image_url"`
 	ImageIndex			uint8		`json:"image_index"`
 }
+
+type FileInfo struct {
+	ActivityID			string
+	WorkID				string
+	ImageName			string
+}

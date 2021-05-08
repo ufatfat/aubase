@@ -19,14 +19,14 @@ func GetGroups (activityID uint32) (groups []model.WorkGroup) {
 	return
 }
 
-func AddImageToDB (workID uint32, filename string) (ok bool) {
-	begin := strings.LastIndex(filename, "/")
-	end := strings.LastIndex(filename, ".")
-	idx, _ := strconv.ParseUint(filename[begin:end], 10, 8)
+func AddImageToDB (fileInfo *model.FileInfo) (ok bool) {
+	end := strings.LastIndex(fileInfo.ImageName, ".")
+	idx, _ := strconv.ParseUint(fileInfo.ImageName[:end], 10, 8)
+	workID, _ := strconv.ParseUint(fileInfo.WorkID, 10, 32)
 	if err := db.Table("images").Create(&model.ImageInfo{
-		WorkID: workID,
+		WorkID: uint32(workID),
 		ImageIndex: uint8(idx),
-		ImageUrl: "http://static.aubase.cn" + filename,
+		ImageUrl: "http://static.aubase.cn/" + fileInfo.ActivityID + "/" + fileInfo.WorkID + "/" + fileInfo.ImageName,
 	}).Error; err == nil {
 		return true
 	}
