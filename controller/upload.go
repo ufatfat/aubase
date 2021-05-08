@@ -63,7 +63,7 @@ func uploadFilesToOSS (fileInfo *model.FileInfo) (err error) {
 
 	filePath := "tmp/" + fileInfo.ActivityID + "_" + fileInfo.WorkID + "_" + fileInfo.ImageName
 	// 上传本地文件。
-	if err = bucket.PutObjectFromFile("/" + fileInfo.ActivityID + "/" + fileInfo.WorkID + "/" + fileInfo.ImageName, filePath); err != nil {
+	if err = bucket.PutObjectFromFile(fileInfo.ActivityID + "/" + fileInfo.WorkID + "/" + fileInfo.ImageName, filePath); err != nil {
 		fmt.Println(err.Error())
 		return
 	} else {
