@@ -43,7 +43,7 @@ func GetWorkToVote (userID, activityID, turnID uint32) (workInfo model.WorkInfo,
 	nextWorkID := workRange[idx + 1]
 
 	// 查询作品信息
-	db.Table("work").Select("work_id", "work_group", "work_index").Where("work_id=? and activity_id=?", nextWorkID, activityID).First(&workInfo)
+	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("work_id=? and activity_id=?", nextWorkID, activityID).First(&workInfo)
 
 	workInfo.WorkImages = getWorkImages(nextWorkID)
 	return
@@ -65,7 +65,7 @@ func GetWorkNum (turnID uint32) (workNum uint32) {
 }
 
 func GetWorkToVoteByID (userID, turnID, workID uint32) (workInfo model.WorkInfo, err error) {
-	if err = db.Table("work").Select("work_id", "work_index", "work_group").Where("work_id=? and current_turn_index=(?)", workID, db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).First(&workInfo).Error; err != nil {
+	if err = db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("work_id=? and current_turn_index=(?)", workID, db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).First(&workInfo).Error; err != nil {
 		return
 	}
 	workInfo.WorkImages = getWorkImages(workID)
