@@ -5,7 +5,7 @@ type CreateWork struct {
 	WorkID				uint32		`json:"work_id,omitempty" gorm:"primary_key"`
 	ActivityID			uint32		`json:"activity_id,omitempty"`
 	GroupID				uint32		`json:"group_id,omitempty"`
-	WorkGroup			string		`json:"work_group,omitempty"`
+	WorkGroup			string		`json:"work_group,omitempty" gorm:"-"`
 	WorkName			string		`json:"work_name"`
 	SeqID				string		`json:"seq_id"`
 	LeaderName			string		`json:"leader_name"`
