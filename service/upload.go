@@ -7,7 +7,7 @@ import (
 )
 
 func CreateWork (workInfo *model.CreateWork) (workID uint32, err error) {
-	if err = db.Table("work").Create(workInfo).Error; err != nil {
+	if err = db.Table("work").Create(workInfo).Omit("work_group").Error; err != nil {
 		return
 	}
 	workID = workInfo.WorkID
