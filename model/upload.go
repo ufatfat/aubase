@@ -1,11 +1,13 @@
 package model
 
 type CreateWork struct {
+	Class				uint8		`json:"class"`
 	WorkID				uint32		`json:"work_id,omitempty" gorm:"primary_key"`
 	GroupID				uint32		`json:"group_id"`
 	WorkName			string		`json:"work_name"`
 	SeqID				string		`json:"seq_id"`
-	FirstDesignerOrg	string		`json:"first_designer_org"`
+	LeaderName			string		`json:"leader_name"`
+	LeaderOrg			string		`json:"leader_org"`
 	Designers			string		`json:"designers"`
 	Teacher				string		`json:"teacher,omitempty"`
 	Phone				string		`json:"phone"`
