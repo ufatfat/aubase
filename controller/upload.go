@@ -56,7 +56,7 @@ func uploadFilesToOSS (fileInfo *model.FileInfo) (err error) {
 	}
 
 	// 获取存储空间。
-	bucket, err := client.Bucket("2021aubase")
+	bucket, err := client.Bucket(config.OSS_BUCKET)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
