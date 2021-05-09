@@ -43,7 +43,7 @@ func GetWorkToVote (userID, activityID, turnID uint32) (workInfo model.WorkInfo,
 	nextWorkID := workRange[idx + 1]
 
 	// 查询作品信息
-	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("work_id=? and activity_id=?", nextWorkID, activityID).First(&workInfo)
+	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("work_id=? and work.activity_id=?", nextWorkID, activityID).First(&workInfo)
 
 	workInfo.WorkImages = getWorkImages(nextWorkID)
 	return
