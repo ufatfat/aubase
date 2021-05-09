@@ -46,7 +46,7 @@ func InitRouter () (r *gin.Engine) {
 			activity.Use(middleware.IsSignedOut)
 			activity.GET("/turn", controller.GetTurnInfo)
 		}
-		upload := api.Group("upload")
+		upload := api.Group("/upload")
 		{
 			upload.POST("", controller.UploadImage)
 			upload.POST("/info", controller.CreateWork)
