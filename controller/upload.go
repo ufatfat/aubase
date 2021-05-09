@@ -86,6 +86,8 @@ func GetGroups (c *gin.Context) {
 
 func CreateWork (c *gin.Context) {
 	var info model.CreateWork
+	activityID, _ := c.Get("activityID")
+	info.ActivityID = activityID.(uint32)
 	if err := c.BindJSON(&info); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),

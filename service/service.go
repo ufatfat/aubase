@@ -2,6 +2,7 @@ package service
 
 import (
 	"aubase/config"
+	"aubase/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -34,5 +35,10 @@ func CheckActivityOpen (activityID uint32) (ok bool) {
 
 func CheckTurnOpen (turnID uint32) (ok bool) {
 	db.Table("turns").Select("is_open").Where("turn_id=?", turnID).Take(&ok)
+	return
+}
+
+func GetStats (activityID uint32) (workInfos []model.CreateWork) {
+	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_name", "seq_id", "leader_name", "leader_org", "designers", "teacher", "phone", "email").Joins("left join groups on work.group_id=groups.group_id").Where("work.activity_id=?", activityID).Scan(&workInfos)
 	return
 }

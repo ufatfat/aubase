@@ -3,6 +3,8 @@ package router
 import (
 	"aubase/controller"
 	"aubase/middleware"
+	"aubase/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,6 +54,13 @@ func InitRouter () (r *gin.Engine) {
 			upload.POST("/info", controller.CreateWork)
 			upload.GET("/group", controller.GetGroups)
 		}
+		api.GET("/stats", func (c *gin.Context) {
+			activityID, _ := c.Get("activityID")
+			workInfos := service.GetStats(activityID.(uint32))
+			for k := range workInfos {
+				fmt.Println(workInfos[k])
+			}
+		})
 	}
 
 
