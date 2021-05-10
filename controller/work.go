@@ -77,6 +77,12 @@ func GetWorkByGroup (c *gin.Context) {
 		return
 	}
 	get := c.Query("get")
+	if get == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": "参数错误",
+		})
+		return
+	}
 	workInfos, err := service.GetWorkByGroup(uint32(groupID), userID.(uint32), turnID.(uint32), get)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
