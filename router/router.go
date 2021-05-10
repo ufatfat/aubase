@@ -28,6 +28,8 @@ func InitRouter () (r *gin.Engine) {
 		{
 			vote.Use(middleware.IsSignedOut, middleware.IsTurnOpen)
 			vote.PUT("", controller.VoteForWork)
+			vote.POST("/done", controller.VoteDone)
+			vote.GET("/done", controller.CheckIsDone)
 			//vote.GET("/num",controller.GetVotedNum)
 		}
 		work := api.Group("/work")

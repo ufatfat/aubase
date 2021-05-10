@@ -89,3 +89,13 @@ func mapToStr (votedWorkList map[string]bool) string {
 	}
 	return s
 }
+
+func VoteDone (userID, turnID uint32) (err error) {
+	err = db.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("is_done", 1).Error
+	return
+}
+
+func CheckIsDone (userID, turnID uint32) (ok bool) {
+	db.Table("votes").Select("is_done").Where("user_id=? and turn_id=?", userID, turnID).Take(&ok)
+	return
+}

@@ -3,24 +3,14 @@ package controller
 import (
 	"aubase/model"
 	"aubase/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func VoteForWork (c *gin.Context) {
 	activityID, _ := c.Get("activityID")
-	if activityID == nil {
-		fmt.Println("a")
-	}
 	userID, _ := c.Get("userID")
-	if userID == nil {
-		fmt.Println("u")
-	}
 	turnID, _ := c.Get("turnID")
-	if turnID == nil {
-		fmt.Println("t")
-	}
 	var voteInfo model.VoteInfo
 	if err := c.BindJSON(&voteInfo); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -38,4 +28,30 @@ func VoteForWork (c *gin.Context) {
 		"msg": "投票成功",
 	})
 
+}
+
+func VoteDone (c *gin.Context) {
+	userID, _ := c.Get("userID")
+	turnID, _ := c.Get("turnID")
+	if err := service.VoteDone(userID.(uint32), turnID.(uint32)); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "提交成功！",
+	})
+}
+
+func CheckIsDone (c *gin.Context) {
+	userID, _ := c.Get("userID")
+	turnID, _ := c.Get("turnID")
+	ok := service.CheckIsDone(userID.(uint32), turnID.(uint32))
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "查询成功！",
+		"data": gin.H{
+			"is_done": ok,
+		},
+	})
 }
