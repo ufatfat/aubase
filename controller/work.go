@@ -2,7 +2,6 @@ package controller
 
 import (
 	"aubase/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -13,7 +12,6 @@ func GetWorkToVote (c *gin.Context) {
 	activityID, _ := c.Get("activityID")
 	turnID, _ := c.Get("turnID")
 	workInfo, err := service.GetWorkToVote(userID.(uint32), activityID.(uint32), turnID.(uint32))
-	fmt.Println(workInfo)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
@@ -66,6 +64,9 @@ func GetWorkToVoteByID (c *gin.Context) {
 	})
 }
 
+func GetWorkByGroup (c *gin.Context) {
+
+}
 func GetWorkRange (c *gin.Context) {
 	turnID, _ := c.Get("turnID")
 	workRange := service.GetWorkRange(turnID.(uint32))

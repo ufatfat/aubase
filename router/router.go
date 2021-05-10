@@ -41,6 +41,8 @@ func InitRouter () (r *gin.Engine) {
 					controller.GetWorkNum(c)
 				case "range":
 					controller.GetWorkRange(c)
+				case "group":
+					controller.GetWorkByGroup(c)
 				default:
 					controller.GetWorkToVoteByID(c)
 				}

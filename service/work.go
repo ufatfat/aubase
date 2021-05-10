@@ -3,7 +3,6 @@ package service
 import (
 	"aubase/model"
 	"aubase/util"
-	"fmt"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -17,17 +16,14 @@ func GetWorkToVote (userID, activityID, turnID uint32) (workInfo model.WorkInfo,
 		if err != gorm.ErrRecordNotFound {
 			return
 		} else {
-			db.Table("work").Select("work_id").Where("current_turn_index=(?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).First(&currentWorkID)
+			db.Table("work").Select("work_id").Where("current_turn_index=(?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).Take(&currentWorkID)
 			err = nil
 		}
 	}
-	fmt.Println("currentWorkID:", currentWorkID)
 
 	// 获取下一个作品的ID
 	workRange := GetWorkRange(turnID)
 	idx := util.GetIndexOfElem(&workRange, currentWorkID)
-
-	fmt.Println("idx:", idx)
 	// 当前轮次不存在此作品
 	if idx == -1 {
 		return model.WorkInfo{
