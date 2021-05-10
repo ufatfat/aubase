@@ -3,7 +3,7 @@ module aubase
 go 1.16
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.4.1
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.4.0
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1069 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
