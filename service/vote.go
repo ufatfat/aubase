@@ -101,6 +101,6 @@ func CheckIsDone (userID, turnID uint32) (ok bool) {
 }
 
 func GetVotedNum (userID, turnID uint32) (num uint16) {
-	db.Table("votes").Select("current_voted_num").Where("user_id=? and turn_id=?", userID, turnID).Take(&num)
+	db.Table("votes").Select("current_votes_num").Where("user_id=? and turn_id=?", userID, turnID).Take(&num)
 	return
 }
