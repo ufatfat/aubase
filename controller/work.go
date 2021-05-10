@@ -68,7 +68,7 @@ func GetWorkByGroup (c *gin.Context) {
 	userID, _ := c.Get("userID")
 	turnID, _ := c.Get("turnID")
 
-	g := c.Query("groupID")
+	g := c.Query("group")
 	groupID, err := strconv.ParseUint(g, 10, 32)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
