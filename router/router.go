@@ -74,6 +74,7 @@ func InitRouter () (r *gin.Engine) {
 				for k := range colsKey {
 					v := reflect.ValueOf(workInfos[i]).FieldByName(colsKey[k])
 					if colsKey[k] == "Class" {
+						fmt.Println(v, v.Uint())
 						if v.Uint() == 0 {
 							if err := f.SetCellValue("Sheet1", string(cols[k])+strconv.FormatInt(int64(i+2), 10), "高校"); err != nil {
 								fmt.Println(err.Error())

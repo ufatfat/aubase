@@ -3,6 +3,8 @@ package service
 import (
 	"aubase/model"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
 )
 
 func VoteForWork (activityID, userID, turnID uint32, voteInfo model.VoteInfo) (err error) {
@@ -27,7 +29,57 @@ func VoteForWork (activityID, userID, turnID uint32, voteInfo model.VoteInfo) (e
 	}
 	tx := db.Begin()
 	var curVotedWorkList string
-
-
+	db.Table("votes").Select("voted_work_ids").Where("user_id=? and turn_id=?", userID, turnID).Take(&curVotedWorkList)
+	m := strToMap(curVotedWorkList)
+	k := strconv.FormatUint(uint64(voteInfo.CurrentWorkID), 10)
+	if voteInfo.IsVoted {
+		if !m[k] {
+			m[k] = true
+			if err = tx.Table("work").Where("work_id=?", voteInfo.CurrentWorkID).Update("current_votes_num", gorm.Expr("current_votes_num+?", 1)).Error; err != nil {
+				tx.Rollback()
+				return
+			}
+			if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("voted_num", gorm.Expr("voted_num+?", 1)).Error; err != nil {
+				tx.Rollback()
+				return
+			}
+		}
+	} else {
+		if m[k] {
+			delete(m, strconv.FormatUint(uint64(voteInfo.CurrentWorkID), 10))
+			if err = tx.Table("work").Where("work_id=?", voteInfo.CurrentWorkID).Update("current_votes_num", gorm.Expr("current_votes_num-?", 1)).Error; err != nil {
+				tx.Rollback()
+				return
+			}
+			if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("voted_num", gorm.Expr("voted_num-?", 1)).Error; err != nil {
+				tx.Rollback()
+				return
+			}
+		}
+	}
+	curVotedWorkList = mapToStr(m)
+	if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("voted_work_ids", curVotedWorkList).Update("current_work_id", voteInfo.CurrentWorkID).Error; err != nil {
+		tx.Rollback()
+		return
+	}
+	tx.Commit()
 	return nil
+}
+
+func strToMap (votedWorkList string) map[string]bool {
+	t := strings.Split(votedWorkList, ";")
+	l := make(map[string]bool)
+	for k := range t {
+		l[t[k]] = true
+	}
+	delete(l, "")
+	return l
+}
+
+func mapToStr (votedWorkList map[string]bool) string {
+	s := ""
+	for k := range votedWorkList {
+		s += k + ";"
+	}
+	return s
 }
