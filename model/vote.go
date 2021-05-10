@@ -12,3 +12,8 @@ type CreateVote struct {
 	TurnID				uint32
 	VotesNum			uint16
 }
+
+type CurVoteInfo struct {
+	CurrentVoteID		uint32
+	VotedWorkIDs		string
+}

@@ -65,7 +65,29 @@ func GetWorkToVoteByID (c *gin.Context) {
 }
 
 func GetWorkByGroup (c *gin.Context) {
+	userID, _ := c.Get("userID")
+	turnID, _ := c.Get("turnID")
 
+	g := c.Param("groupID")
+	groupID, err := strconv.ParseUint(g, 10, 32)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": "参数错误",
+		})
+		return
+	}
+	get := c.Query("get")
+	workInfos, err := service.GetWorkByGroup(uint32(groupID), userID.(uint32), turnID.(uint32), get)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "查询成功！",
+		"data": workInfos,
+	})
 }
 func GetWorkRange (c *gin.Context) {
 	turnID, _ := c.Get("turnID")

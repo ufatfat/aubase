@@ -34,7 +34,7 @@ func InitRouter () (r *gin.Engine) {
 		{
 			work.Use(middleware.IsSignedOut, middleware.IsTurnOpen)
 			work.GET("", controller.GetWorkToVote)
-			work.GET("/:workID", func (c *gin.Context) {
+			work.GET("/:workID/:groupID", func (c *gin.Context) {
 				p := c.Param("workID")
 				switch p {
 				case "num":

@@ -16,27 +16,31 @@ func GetWorkToVote (userID, activityID, turnID uint32) (workInfo model.WorkInfo,
 		if err != gorm.ErrRecordNotFound {
 			return
 		} else {
-			db.Table("work").Select("work_id").Where("current_turn_index=(?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).Take(&currentWorkID)
 			err = nil
 		}
 	}
 
+	var nextWorkID uint32
 	// 获取下一个作品的ID
 	workRange := GetWorkRange(turnID)
-	idx := util.GetIndexOfElem(&workRange, currentWorkID)
-	// 当前轮次不存在此作品
-	if idx == -1 {
-		return model.WorkInfo{
-			WorkGroup: "No",
-		}, nil
+	if currentWorkID == 0 {
+		nextWorkID = workRange[0]
+	} else {
+		idx := util.GetIndexOfElem(&workRange, currentWorkID)
+		// 当前轮次不存在此作品
+		if idx == -1 {
+			return model.WorkInfo{
+				WorkGroup: "No",
+			}, nil
+		}
+		// 当前轮次已浏览完
+		if idx == len(workRange) - 1 {
+			return model.WorkInfo{
+				WorkGroup: "End",
+			}, nil
+		}
+		nextWorkID = workRange[idx + 1]
 	}
-	// 当前轮次已浏览完
-	if idx == len(workRange) - 1 {
-		return model.WorkInfo{
-			WorkGroup: "End",
-		}, nil
-	}
-	nextWorkID := workRange[idx + 1]
 
 	// 查询作品信息
 	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("work_id=? and work.activity_id=?", nextWorkID, activityID).First(&workInfo)
@@ -87,4 +91,8 @@ func checkIsVoted (userID, turnID, workID uint32) bool {
 	votedWorkList := getVotedWorkList(userID, turnID)
 	w := strconv.FormatUint(uint64(workID), 10)
 	return votedWorkList[w]
+}
+
+func GetWorkByGroup (groupID, userID, turnID uint32, get string) (workInfos []model.WorkInfo, err error) {
+	return
 }
