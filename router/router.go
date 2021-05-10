@@ -25,7 +25,7 @@ func InitRouter () (r *gin.Engine) {
 			vote.PUT("", controller.VoteForWork)
 			vote.POST("/done", controller.VoteDone)
 			vote.GET("/done", controller.CheckIsDone)
-			//vote.GET("/num",controller.GetVotedNum)
+			vote.GET("/num",controller.GetVotedNum)
 		}
 		work := api.Group("/work")
 		{

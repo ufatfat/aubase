@@ -55,3 +55,15 @@ func CheckIsDone (c *gin.Context) {
 		},
 	})
 }
+
+func GetVotedNum (c *gin.Context) {
+	userID, _ := c.Get("userID")
+	turnID, _ := c.Get("turnID")
+	num := service.GetVotedNum(userID.(uint32), turnID.(uint32))
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "查询成功！",
+		"data": gin.H{
+			"num": num,
+		},
+	})
+}
