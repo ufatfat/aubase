@@ -28,10 +28,9 @@ func VoteForWork (activityID, userID, turnID uint32, voteInfo model.VoteInfo) (e
 		}
 	}
 	tx := db.Begin()
-	var curVotedWorkList string
-	db.Table("votes").Select("voted_work_ids").Where("user_id=? and turn_id=?", userID, turnID).Take(&curVotedWorkList)
-	db.Table("votes")
-	m := strToMap(curVotedWorkList)
+	var curVoteInfo model.CurVoteInfo
+	db.Table("votes").Select("voted_work_ids, current_work_id").Where("user_id=? and turn_id=?", userID, turnID).Take(&curVoteInfo)
+	m := strToMap(curVoteInfo.VotedWorkIDs)
 	k := strconv.FormatUint(uint64(voteInfo.CurrentWorkID), 10)
 	if voteInfo.IsVoted {
 		if !m[k] {
@@ -58,10 +57,16 @@ func VoteForWork (activityID, userID, turnID uint32, voteInfo model.VoteInfo) (e
 			}
 		}
 	}
-	curVotedWorkList = mapToStr(m)
-	if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("voted_work_ids", curVotedWorkList).Error; err != nil {
+	curVoteInfo.VotedWorkIDs = mapToStr(m)
+	if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("voted_work_ids", curVoteInfo.VotedWorkIDs).Error; err != nil {
 		tx.Rollback()
 		return
+	}
+	if voteInfo.CurrentWorkID > curVoteInfo.CurrentVoteID {
+		if err = tx.Table("votes").Where("user_id=? and turn_id=?", userID, turnID).Update("current_work_id", voteInfo.CurrentWorkID).Error; err != nil {
+			tx.Rollback()
+			return
+		}
 	}
 	tx.Commit()
 	return nil
