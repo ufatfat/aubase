@@ -20,8 +20,16 @@ func GetWorkToVote (c *gin.Context) {
 		return
 	}
 	if workInfo.WorkGroup == "End" {
+		workInfo, err = service.GetWorkToVoteByID(userID.(uint32), turnID.(uint32), service.GetWorkRange(turnID.(uint32))[0])
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"msg": err.Error(),
+			})
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "当前轮次作品已浏览完！",
+			"data": workInfo,
 		})
 		return
 	}
