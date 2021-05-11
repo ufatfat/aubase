@@ -3,11 +3,18 @@ package router
 import (
 	"aubase/controller"
 	"aubase/middleware"
+	"aubase/service"
 	"github.com/gin-gonic/gin"
 )
 
 func InitRouter () (r *gin.Engine) {
 	r = gin.Default()
+	r.GET("/index", func (c *gin.Context) {
+		l := service.GetWorkRange(1)
+		for k := range l {
+			service.GenIndex(l[k], k)
+		}
+	})
 	api := r.Group("/api")
 	{
 		api.Use(middleware.IsActivityOpen)

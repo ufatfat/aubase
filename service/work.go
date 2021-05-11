@@ -96,7 +96,11 @@ func checkIsVoted (userID, turnID, workID uint32) bool {
 func GetWorkByGroup (groupID, userID, turnID uint32, get string) (workInfos []model.WorkInfo, err error) {
 	switch get {
 	case "all":
-		db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=?", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID).Scan(&workInfos)
+		if groupID == 0 {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID)).Scan(&workInfos)
+		} else {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=?", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID).Scan(&workInfos)
+		}
 		for k := range workInfos {
 			workInfos[k].WorkImages = getWorkImages(workInfos[k].WorkID)
 		}
@@ -104,7 +108,11 @@ func GetWorkByGroup (groupID, userID, turnID uint32, get string) (workInfos []mo
 		var v string
 		db.Table("votes").Select("voted_work_ids").Where("user_id=? and turn_id=?", userID, turnID).Take(&v)
 		b := strings.Split(v, ";")
-		db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=? and work.work_id in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID, b).Scan(&workInfos)
+		if groupID == 0 {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.work_id in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), b).Scan(&workInfos)
+		} else {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=? and work.work_id in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID, b).Scan(&workInfos)
+		}
 		for k := range workInfos {
 			workInfos[k].WorkImages = getWorkImages(workInfos[k].WorkID)
 		}
@@ -112,7 +120,11 @@ func GetWorkByGroup (groupID, userID, turnID uint32, get string) (workInfos []mo
 		var v string
 		db.Table("votes").Select("voted_work_ids").Where("user_id=? and turn_id=?", userID, turnID).Take(&v)
 		b := strings.Split(v, ";")
-		db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=? and work.work_id not in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID, b).Scan(&workInfos)
+		if groupID == 0 {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.work_id not in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), b).Scan(&workInfos)
+		} else {
+			db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_index").Joins("left join groups on work.group_id=groups.group_id").Where("current_turn_index=(?) and work.group_id=? and work.work_id not in (?)", db.Table("turns").Select("turn_index").Where("turn_id=?", turnID), groupID, b).Scan(&workInfos)
+		}
 		for k := range workInfos {
 			workInfos[k].WorkImages = getWorkImages(workInfos[k].WorkID)
 		}

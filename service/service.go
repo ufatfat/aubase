@@ -42,3 +42,7 @@ func GetStats (activityID uint32) (workInfos []model.CreateWork) {
 	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_name", "seq_id", "leader_name", "leader_org", "designers", "teacher", "phone", "email").Joins("left join groups on work.group_id=groups.group_id").Where("work.activity_id=?", activityID).Scan(&workInfos)
 	return
 }
+
+func GenIndex (workID uint32, idx int) {
+	db.Table("work").Where("work_id=?", workID).Update("work_index", idx+1)
+}
