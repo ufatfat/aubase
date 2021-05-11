@@ -11,3 +11,7 @@ type WorkOrder struct {
 	WorkName			string	`json:"work_name"`
 	CurrentVotesNum		uint16	`json:"current_votes_num"`
 }
+
+type AdminVote struct {
+	VoteIdxList			string `json:"vote_idx_list"`
+}

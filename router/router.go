@@ -70,6 +70,7 @@ func InitRouter () (r *gin.Engine) {
 			admin.GET("/file", controller.GetFile)
 			admin.GET("/votes", middleware.IsTurnOpen, controller.GetVoteStats)
 			admin.GET("/order", middleware.IsTurnOpen, controller.GetOrder)
+			admin.POST("/votes/:userID", middleware.IsTurnOpen, controller.AdminVote)
 		}
 	}
 
