@@ -56,7 +56,6 @@ func InitRouter () (r *gin.Engine) {
 		}
 		activity := api.Group("/activity")
 		{
-			activity.Use(middleware.IsSignedOut)
 			activity.GET("/turn", controller.GetTurnInfo)
 		}
 		upload := api.Group("/upload")
@@ -71,6 +70,7 @@ func InitRouter () (r *gin.Engine) {
 			admin.GET("/votes", middleware.IsTurnOpen, controller.GetVoteStats)
 			admin.GET("/order", middleware.IsTurnOpen, controller.GetOrder)
 			admin.POST("/votes/:userID", middleware.IsTurnOpen, controller.AdminVote)
+			admin.GET("/users", controller.GetUsers)
 		}
 	}
 

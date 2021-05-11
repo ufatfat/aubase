@@ -13,5 +13,5 @@ type WorkOrder struct {
 }
 
 type AdminVote struct {
-	VoteIdxList			string `json:"vote_idx_list"`
+	VoteIdxList			string	`json:"vote_idx_list"`
 }

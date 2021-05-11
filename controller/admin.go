@@ -100,3 +100,11 @@ func AdminVote (c *gin.Context) {
 		"msg": "提交成功！",
 	})
 }
+
+func GetUsers (c *gin.Context) {
+	userInfos := service.GetUsers()
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "查询成功！",
+		"data": userInfos,
+	})
+}

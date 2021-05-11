@@ -52,3 +52,8 @@ func AdminVote (userID, turnID, activityID uint32, workIdxs []string) (err error
 	tx.Commit()
 	return
 }
+
+func GetUsers () (userInfos []model.UserInfo) {
+	db.Table("users").Select("user_id", "name").Scan(&userInfos)
+	return
+}
