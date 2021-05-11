@@ -131,3 +131,8 @@ func GetWorkByGroup (groupID, userID, turnID uint32, get string) (workInfos []mo
 	}
 	return
 }
+
+func GetWorkIDByWorkIndex (idx uint16) (workID uint32, err error) {
+	err = db.Table("work").Select("work_id").Where("work_index=?", idx).Take(&workID).Error
+	return
+}

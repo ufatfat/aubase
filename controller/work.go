@@ -3,6 +3,7 @@ package controller
 import (
 	"aubase/service"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
@@ -111,6 +112,37 @@ func GetWorkNum (c *gin.Context) {
 		"msg": "查询成功！",
 		"data": gin.H{
 			"num": workNum,
+		},
+	})
+}
+
+func GetWorkIDByWorkIndex (c *gin.Context) {
+	i := c.Query("i")
+	idx, err := strconv.ParseUint(i, 10,16)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"msg": "参数错误！",
+		})
+		return
+	}
+	workID, err := service.GetWorkIDByWorkIndex(uint16(idx))
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"msg": "没有此作品！",
+			})
+			return
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"msg": err.Error(),
+			})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "查询成功！",
+		"data": gin.H{
+			"work_id": workID,
 		},
 	})
 }
