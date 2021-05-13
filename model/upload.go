@@ -3,6 +3,8 @@ package model
 type CreateWork struct {
 	Class				uint8		`json:"class"`
 	WorkID				uint32		`json:"work_id,omitempty" gorm:"primary_key"`
+	WorkIndex			uint16		`json:"work_index,omitempty"`
+	CurrentVotesNum		uint16		`json:"current_votes_num,omitempty"`
 	ActivityID			uint32		`json:"activity_id,omitempty"`
 	GroupID				uint32		`json:"group_id,omitempty"`
 	WorkGroup			string		`json:"work_group,omitempty"`

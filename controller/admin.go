@@ -17,9 +17,9 @@ func GetFile (c *gin.Context) {
 	workInfos := service.GetStats(activityID.(uint32))
 	f := excelize.NewFile()
 	idx := f.NewSheet("Sheet1")
-	cols := "ABCDEFGHIJ"
-	colsHeader := []string{"分类", "组别", "名称", "报名序列号", "负责人姓名", "负责人单位", "设计人员", "指导老师", "联系电话", "联系邮箱"}
-	colsKey := []string{"Class", "WorkGroup", "WorkName", "SeqID", "LeaderName", "LeaderOrg", "Designers", "Teacher", "Phone", "Email"}
+	cols := "ABCDEFGHIJKL"
+	colsHeader := []string{"序号", "分类", "组别", "名称", "票数", "报名序列号", "负责人姓名", "负责人单位", "设计人员", "指导老师", "联系电话", "联系邮箱"}
+	colsKey := []string{"WorkIndex", "Class", "WorkGroup", "WorkName", "CurrentVotesNum", "SeqID", "LeaderName", "LeaderOrg", "Designers", "Teacher", "Phone", "Email"}
 	for k := range cols {
 		if err := f.SetCellValue("Sheet1", string(cols[k]) + "1", colsHeader[k]); err != nil {
 			fmt.Println(err.Error())
@@ -29,7 +29,6 @@ func GetFile (c *gin.Context) {
 		for k := range colsKey {
 			v := reflect.ValueOf(workInfos[i]).FieldByName(colsKey[k])
 			if colsKey[k] == "Class" {
-				fmt.Println(v, v.Uint())
 				if v.Uint() == 0 {
 					if err := f.SetCellValue("Sheet1", string(cols[k])+strconv.FormatInt(int64(i+2), 10), "高校"); err != nil {
 						fmt.Println(err.Error())
