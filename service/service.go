@@ -39,7 +39,8 @@ func CheckTurnOpen (turnID uint32) (ok bool) {
 }
 
 func GetStats (activityID uint32) (workInfos []model.CreateWork) {
-	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_name", "seq_id", "leader_name", "leader_org", "designers", "teacher", "phone", "email", "work_index", "class", "current_votes_num").Joins("left join `groups` on work.group_id=groups.group_id").Where("work.activity_id=?", activityID).Order("work.current_votes_num desc").Scan(&workInfos)
+	turnInfo, _ := GetTurnInfo(activityID)
+	db.Table("work").Select("work.work_id", "groups.group_name as work_group", "work_name", "seq_id", "leader_name", "leader_org", "designers", "teacher", "phone", "email", "work_index", "class", "current_votes_num").Joins("left join `groups` on work.group_id=groups.group_id").Where("work.activity_id=? and work.current_turn_index=?", activityID, turnInfo.TurnIndex).Order("work.current_votes_num desc").Scan(&workInfos)
 	return
 }
 
