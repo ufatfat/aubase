@@ -48,6 +48,6 @@ func GenIndex (workID uint32, idx int) {
 	db.Table("work").Where("work_id=?", workID).Update("work_index", idx+1)
 }
 
-func GetImages() (images []string) {
+/*func GetImages() (images []string) {
 	db.Table("images").Select("image_url").
-}
+}*/
