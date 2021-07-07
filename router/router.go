@@ -5,7 +5,6 @@ import (
 	"aubase/middleware"
 	"aubase/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func InitRouter () (r *gin.Engine) {
@@ -74,11 +73,6 @@ func InitRouter () (r *gin.Engine) {
 			admin.GET("/users", controller.GetUsers)
 			admin.GET("/turn", controller.GetTurns)
 		}
-		api.GET("/test", func (c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"data": service.GetImages(),
-			})
-		})
 
 	}
 
