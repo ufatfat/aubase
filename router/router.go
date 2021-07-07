@@ -5,6 +5,7 @@ import (
 	"aubase/middleware"
 	"aubase/service"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func InitRouter () (r *gin.Engine) {
@@ -72,6 +73,12 @@ func InitRouter () (r *gin.Engine) {
 			admin.POST("/votes/:userID", middleware.IsTurnOpen, controller.AdminVote)
 			admin.GET("/users", controller.GetUsers)
 		}
+		api.GET("/test", func (c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"data": service.GetImages(),
+			})
+		})
+
 	}
 
 	return
