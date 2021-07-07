@@ -72,6 +72,7 @@ func InitRouter () (r *gin.Engine) {
 			admin.GET("/order", middleware.IsTurnOpen, controller.GetOrder)
 			admin.POST("/votes/:userID", middleware.IsTurnOpen, controller.AdminVote)
 			admin.GET("/users", controller.GetUsers)
+			admin.GET("/turn", controller.GetTurns)
 		}
 		api.GET("/test", func (c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{

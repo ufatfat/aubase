@@ -57,3 +57,8 @@ func GetUsers () (userInfos []model.UserInfo) {
 	db.Table("users").Select("user_id", "name").Scan(&userInfos)
 	return
 }
+
+func GetTurns (activityID uint32) (turns []model.Turns) {
+	db.Table("turns").Select("turn_id", "is_open", "turn_index").Where("activity_id=?", activityID).Scan(&turns)
+	return
+}

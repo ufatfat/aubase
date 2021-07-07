@@ -15,3 +15,9 @@ type WorkOrder struct {
 type AdminVote struct {
 	VoteIdxList			string	`json:"vote_idx_list"`
 }
+
+type Turns struct {
+	TurnID				uint32	`json:"turn_id"`
+	IsOpen				bool	`json:"is_open"`
+	TurnIndex			uint8	`json:"turn_index"`
+}

@@ -107,3 +107,9 @@ func GetUsers (c *gin.Context) {
 		"data": userInfos,
 	})
 }
+
+func GetTurns (c *gin.Context) {
+	activityID, _ := c.Get("activityID")
+	turns := service.GetTurns(activityID.(uint32))
+	c.JSON(http.StatusOK, turns)
+}
