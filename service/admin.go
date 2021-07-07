@@ -62,3 +62,13 @@ func GetTurns (activityID uint32) (turns []model.Turns) {
 	db.Table("turns").Select("turn_id", "is_open", "turn_index").Where("activity_id=?", activityID).Scan(&turns)
 	return
 }
+
+func OpenTurn (turnID, activityID uint32) (err error) {
+	if err = db.Table("turns").Where("activity_id=?", activityID).Update("is_open", 0).Error; err != nil {
+		return
+	}
+	if err = db.Table("turns").Where("turn_id=?", turnID).Update("is_open", 1).Error; err != nil {
+		return
+	}
+	return
+}

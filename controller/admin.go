@@ -113,3 +113,18 @@ func GetTurns (c *gin.Context) {
 	turns := service.GetTurns(activityID.(uint32))
 	c.JSON(http.StatusOK, turns)
 }
+
+func OpenTurn (c *gin.Context) {
+	t := c.Query("turn")
+	turnID, _ := strconv.ParseUint(t, 10, 32)
+	activityID, _ := c.Get("activityID")
+	if err := service.OpenTurn(uint32(turnID), activityID.(uint32)); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "修改成功！",
+	})
+}
